@@ -1,4 +1,4 @@
-![img](https://github.com/madeiramadeirabr/action-generate-changelog/blob/production/img/action-generate-release.svg)
+![img](https://github.com/madeiramadeirabr/action-generate-changelog/blob/production/img/action-generate-changelog.svg)
 # action-generate-changelog
 
 ## Description
