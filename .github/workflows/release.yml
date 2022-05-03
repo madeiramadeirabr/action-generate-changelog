@@ -13,7 +13,7 @@ jobs:
         uses: madeiramadeirabr/action-generate-release@production
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          
+
   changelog:
     runs-on: ubuntu-latest
     name: 'Changelog'
@@ -26,6 +26,6 @@ jobs:
           fetch-depth: 0
 
       - name: update package.json
-        uses: archaic10/generate-changelog@main
+        uses: madeiramadeirabr/action-generate-changelog@v0.1.0
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
