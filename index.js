@@ -121,7 +121,7 @@ async function getContentFile (raw_url){
 async function modifyVersionAndUploadFile(data, sha, newVersion){
     if (data && data != ''){
         try{
-            await exec("yarn install")
+            await exec("yarn install --ignore-workspace-root-check")
             let fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
             let defaultVersion = /"version":[\s]+"([v0-9|0-9]+).([0-9]+).([0-9]+)"/
             newVersion = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
@@ -177,7 +177,7 @@ async function uploadFileBase64(){
 }
 
 async function generateChangelog(){
-    await exec('yarn add auto-changelog --dev')
+    await exec('yarn add auto-changelog --dev --ignore-workspace-root-check')
     await exec('yarn auto-changelog -p')
 }
 
