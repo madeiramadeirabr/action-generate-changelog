@@ -13453,7 +13453,12 @@ async function modifyVersionAndUploadFile(data, sha, newVersion){
     if (data && data != ''){
         try{
             await exec("yarn install --ignore-workspace-root-check")
-            let fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
+            let fileRead =  ''
+            if(path.split('/').length >1){
+                fileRead = path.split('/')[0]== ''? fs.readFileSync(path.substr(1), 'utf8').toString()  : fs.readFileSync(path, 'utf8').toString()
+            }else{
+                fileRead = fs.readFileSync(`./package.json`, 'utf8').toString()
+            }
             let defaultVersion = /"version":[\s]+"([v0-9|0-9]+).([0-9]+).([0-9]+)"/
             newVersion = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
             fileRead = fileRead.replace(defaultVersion, `"version": "${newVersion}"`)
