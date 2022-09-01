@@ -1,0 +1,18 @@
+
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: action-generate-changelog
+  description: |
+    Github Action que cria um changelog baseado na versão mais recente da tag do repositório.
+  annotations:
+    github.com/project-slug: madeiramadeirabr/action-generate-changelog
+    sonarqube.org/project-key: madeiramadeirabr/action-generate-changelog
+    backstage.io/techdocs-ref: dir:.
+  tags:
+  - javascript
+  - github-action
+spec:
+  type: library
+  lifecycle: production
+  owner: team-platform-services
