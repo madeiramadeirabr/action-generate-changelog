@@ -26,7 +26,15 @@ with:
 ## Ou
 
 ```yml
-uses: madeiramadeirabr/action-generate-changelog@0.1.3
+uses: madeiramadeirabr/action-generate-changelog@0.2.0
 with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
+```
+> Observação:
+Se você utiliza o npm adicione no objeto script de seu package.json a seguinte linha
+
+```json
+"scripts": {    
+    "changelog": "auto-changelog -p"
+  }
 ```
