@@ -16,10 +16,12 @@ let param = {
 
 async function run(){
     if(githubToken){
+        
         let newVersion = await getTag()
             if(newVersion){
-                await setVersion(newVersion)
-                await generateChangelog()
+                let packageManager = getPackageManager()
+                await setVersion(newVersion, packageManager)
+                await generateChangelog(packageManager)
                 let fileRead = fs.readFileSync(`./CHANGELOG.md`, 'utf8').toString()
                 let fileBase64 = base64.encode(fileRead)
                 path = 'CHANGELOG.md'
@@ -64,13 +66,13 @@ async function findTag(){
     return octokit.request('GET /repos/{owner}/{repo}/git/refs/tags', param)
 }
 
-async function setVersion(newVersion){
+async function setVersion(newVersion, packageManager){
     let content = await getContent()
     let sha = content != 404 ? content.data.sha : null
     let download_url = content != 404 ? content.data.download_url : null
     if (download_url != null){
         let {data} = await getContentFile(download_url)
-        await modifyVersionAndUploadFile(data, sha, newVersion)
+        await modifyVersionAndUploadFile(data, sha, newVersion, packageManager)
     }else{
         core.setFailed('Path inválido!')
     }
@@ -118,10 +120,14 @@ async function getContentFile (raw_url){
     }
 }
 
-async function modifyVersionAndUploadFile(data, sha, newVersion){
+async function modifyVersionAndUploadFile(data, sha, newVersion, packageManager){
     if (data && data != ''){
         try{
-            await exec("yarn install --ignore-workspace-root-check")
+            if(packageManager == 'yarn'){
+                await exec(`${packageManager} install --ignore-workspace-root-check`)
+            }else{
+                await exec(`${packageManager} install`)
+            }
             let fileRead =  ''
             if(path.split('/').length >1){
                 fileRead = path.split('/')[0]== ''? fs.readFileSync(path.substr(1), 'utf8').toString()  : fs.readFileSync(path, 'utf8').toString()
@@ -181,9 +187,24 @@ async function uploadFileBase64(){
     }
 }
 
-async function generateChangelog(){
-    await exec('yarn add auto-changelog --dev --ignore-workspace-root-check')
-    await exec('yarn auto-changelog -p')
+async function generateChangelog(packageManager){
+    if (packageManager == 'yarn'){
+        await exec(`${packageManager} add auto-changelog --dev --ignore-workspace-root-check`)
+        await exec(`${packageManager} auto-changelog -p`)
+    }else{
+        await exec(`${packageManager} install auto-changelog --save-dev --ignore-workspace-root-check`)
+        await exec(`${packageManager} run changelog`)
+    }
+
+}
+
+function getPackageManager(){
+    try{
+        fs.readFileSync(`./yarn.lock`, 'utf8').toString()
+        return 'yarn'
+    }catch{
+        return 'npm'
+    }
 }
 
 run()
