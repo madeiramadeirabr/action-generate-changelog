@@ -18,7 +18,7 @@ Esta action também altera a versão do arquivo `package.json` da branch padrão
 ## Exemplos
 
 ```yml
-uses: madeiramadeirabr/action-generate-changelog@0.1.3
+uses: madeiramadeirabr/action-generate-changelog@0.2.0
 with:
     github-token: ${{ secrets.GITHUB_TOKEN }}
     path: '/src'
