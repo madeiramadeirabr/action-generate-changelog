@@ -134,5 +134,51 @@ export default class ValidateService {
         }
         return true
     }
+
+        
+    doesNpmHaveTheChangelogScript(packageManager, fileRead){
+        if (packageManager != 'npm'){
+            return false
+        }
+        if (fileRead.includes(`"changelog": "auto-changelog -p"`)){
+            return false
+        }
+        return true
+    }
+
+    isTheStringAcompleteScriptObject(content){
+        return (/"scripts"\s*:\s*\{[\s\S]*?\}/.test(content))
+    }
+
+    isTheStringTheBeginningOfAscriptObject(content){
+        return (/"scripts"\s*:\s*\{[\s\S]*?\S.+/.test(content))
+    }
+    
+    isTheStringPartOfAscriptObjectAndItsContentDifferentFromTheExistingOne(isScript, content, script){
+        if(isScript != true){
+            return false
+        }
+
+        if(!(/".+"\s*:\s*[\s\S]*?\S.+/.test(content))){
+            return false
+        }
+
+        if(content == script){
+            return false
+        }
+        return true
+    }
+    
+    isTheStringTheEndOfAscriptObject(isScript, content){
+        if(isScript != true){
+            return false
+        }
+
+        if(!content.includes("}")){
+            return false
+        }
+        
+        return true
+    }
     
 }

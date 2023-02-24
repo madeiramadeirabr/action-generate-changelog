@@ -11,6 +11,22 @@ export default class FsService {
     getFormatService() {
         return this.formatService
     }
+
+    setValidateService(instance) {
+        this.validateService = instance
+    }
+
+    getValidateService() {
+        return this.validateService
+    }
+
+    setExecService(instance) {
+        this.execService = instance
+    }
+    
+    getExecService() {
+        return this.execService
+    }
     
     getPackageManager(){
         try{
@@ -23,16 +39,19 @@ export default class FsService {
         }
     }
 
-    async  getModifyVersion(newVersion, path, packageManager){
+    async getModifyVersion(newVersion, path, packageManager){
         try{
             let fileRead = this.getFileRead(path)
             path = fileRead.path
             const defaultVersion = /"version":[\s]+"([v0-9|0-9]+).([0-9]+).([0-9]+)"/
+            const defaultScript = /"scripts"\s*:\s*\{[\s\S]*?\}/
             newVersion = newVersion.split(/([a-z]|[A-z])+\.*/).pop()
+            
             fileRead = fileRead.contentFile.replace(defaultVersion, `"version": "${newVersion}"`)
-            const scriptsDefault = /"scripts"\s*:\s*\{[\s\S]*?\}/
-            if(packageManager == 'npm'){
-                fileRead = fileRead.replace(scriptsDefault, `"scripts": {\n     "changelog": "auto-changelog -p" \n}`)
+           if(this.getValidateService().doesNpmHaveTheChangelogScript(packageManager, fileRead)){
+                let scriptAdded = this.setScriptPackageJson(fileRead)
+                fileRead = fileRead.replace(defaultScript, scriptAdded)
+                this.updatePackageJson(fileRead)
             }
 
             const fileBase64 = this.getFormatService().base64Encode(fileRead)
@@ -43,6 +62,36 @@ export default class FsService {
         }catch(error){
             console.log(error)
             setFailed('Falha ao atualizar a versão do package.json!')
+        }
+    }
+
+    setScriptPackageJson(content){
+        let scripts = content.split(",")
+        let isScript = false
+        let newScript = ''
+        for(let indice in scripts){
+            if(this.getValidateService().isTheStringAcompleteScriptObject(scripts[indice])){
+                newScript = scripts[indice]
+                newScript = newScript.replace("}", "").trim()
+                newScript = newScript.concat(",", `\n    "changelog": "auto-changelog -p" \n}`)
+                return newScript            
+            }
+
+            if(this.getValidateService().isTheStringTheBeginningOfAscriptObject(scripts[indice])){
+                isScript = true                
+                newScript = scripts[indice]
+            }
+
+            if(this.getValidateService().isTheStringPartOfAscriptObjectAndItsContentDifferentFromTheExistingOne(isScript, scripts[indice], newScript)){
+                newScript = newScript.concat("",`${scripts[indice]},`)
+            }
+           
+            if(this.getValidateService().isTheStringTheEndOfAscriptObject(isScript, scripts[indice])){
+                isScript = false
+                newScript = newScript.replace("}", "").trim()
+                newScript = newScript.concat(`\n    "changelog": "auto-changelog -p" \n}`, "")
+                return newScript
+            }
         }
     }
 
@@ -75,4 +124,15 @@ export default class FsService {
             changelogBase64: this.getFormatService().base64Encode(fileRead)
         }
     }
+
+    updatePackageJson(content){
+        fs.writeFile('package.json', content, 'utf8', (err) => {
+            if (err) {
+              console.error(err);
+              return;
+            }
+            console.log('Arquivo atualizado com sucesso!');
+          });
+    }
+
 }

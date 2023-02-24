@@ -105,6 +105,8 @@ export default class ActionController{
             return
         }
         await this.getExecService().installDependencies(packageManager)
+        this.getFsService().setExecService(this.getExecService())
+        this.getFsService().setValidateService(this.getValidateService())
         const {fileBase64, path} = await this.getFsService().getModifyVersion(lastTag,this.getFilePath(), packageManager)
         this.getFormatService().setParam(githubService.getParam())
         const paramFormGithub = await this.getFormatService().prepareUploadGithub(fileBase64,'package.json', path, sha)
