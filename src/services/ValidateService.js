@@ -1,8 +1,7 @@
 import { setFailed } from '@actions/core';
-import * as github from '@actions/github'
 
 export default class ValidateService {
-    constructor (){
+    constructor (github){
         this.setGithub(github)
     }
 

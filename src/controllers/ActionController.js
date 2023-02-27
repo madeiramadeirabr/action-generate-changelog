@@ -8,18 +8,45 @@ import FormatService from '../services/FormatService.js';
 
 export default class ActionController{
     constructor(){
-        const {githubToken, filePath} = githubDTO
+        const {githubToken, filePath, github, repo, owner} = githubDTO
+        this.setGithub(github)
+        this.setRepo(repo)
+        this.setOwner(owner)
         this.setGithubToken(githubToken)
         this.setFilePath(filePath)
-        this.setValidateService(new ValidateService())
+        this.setValidateService(new ValidateService(this.getGithub()))
         this.setFsService(new FsService())
         this.setExecService(new ExecService())
         this.setFormatService(new FormatService())
         this.getFsService().setFormatService(this.getFormatService())
     }
 
+    setGithub(github){
+        this.github = github
+    }
+
+    getGithub(){
+       return this.github
+    }
+
+    setRepo(repo){
+        this.repo = repo
+    }
+
+    getRepo(){
+       return this.repo
+    }
+
+    setOwner(repo){
+        this.repo = repo
+    }
+
+    getOwner(){
+       return this.owner
+    }
+
     getValidateService(){
-        return this.validateService
+        return this.owner
     }
 
     setValidateService(instance){
@@ -74,7 +101,7 @@ export default class ActionController{
         return this.formatService
     }
 
-    async createChangelog(){
+    async changelog(){
         const githubService = new GithubService(this.getGithubToken())
         githubService.setFormatService(this.getFormatService())
         githubService.setValidateService(this.getValidateService())
@@ -86,8 +113,8 @@ export default class ActionController{
         }
 
        const parameters = {
-            owner: github.context.payload.repository.owner.name,
-            repo: github.context.payload.repository.name
+            owner: this.getOwner(),
+            repo: this.getRepo()
         }
         
         githubService.setParam(parameters)
@@ -106,17 +133,24 @@ export default class ActionController{
             return
         }
 
+        await this.updatePackageJson(packageManager, lastTag, packageManager, sha)
+        await this.createOrUpdateChangelog(packageManager)
+        
+    }
+
+    async updatePackageJson(packageManager, lastTag, packageManager, sha){
         await this.getExecService().installDependencies(packageManager)
         this.getFsService().setExecService(this.getExecService())
         this.getFsService().setValidateService(this.getValidateService())
-        const {fileBase64, path} = await this.getFsService().getModifyVersion(lastTag,this.getFilePath(), packageManager)
+        const {fileBase64, path} = await this.getFsService().getModifyVersion(lastTag, this.getFilePath(), packageManager)
         await this.sendFile(fileBase64,'package.json', path, sha)
-        
+    }
+
+    async createOrUpdateChangelog(packageManager){
         await this.getExecService().generateChangelog(packageManager)
         const {changelogFileName, changelogBase64} = this.getFsService().getChangelogFile()
-        const fileContentRead = await this.getFileRead(changelogFileName)
-        await this.sendFile(changelogBase64, 'CHANGELOG.md' ,changelogFileName, fileContentRead.sha)
-
+        const {sha} = await this.getFileRead(changelogFileName)
+        await this.sendFile(changelogBase64, 'CHANGELOG.md' ,changelogFileName, sha)
     }
 
     async sendFile(fileBase64, fileName, path, sha){
