@@ -39,10 +39,6 @@ export default class GithubService{
     getValidateService(){
         return this.validate
     }
-
-    setFsService(instace){
-        this.fsService = instace
-    }
     
     setFsService(instace){
         this.fsService = instace
@@ -125,7 +121,7 @@ export default class GithubService{
         try{
             return await axios.get(raw_url, {
                 headers: {
-                    Authorization: `Bearer ${githubToken}`
+                    Authorization: `Bearer ${this.getGithubToken()}`
                 }
             })
         }catch(error){

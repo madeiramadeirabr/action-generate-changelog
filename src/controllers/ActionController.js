@@ -46,7 +46,7 @@ export default class ActionController{
     }
 
     getValidateService(){
-        return this.owner
+        return this.validateService
     }
 
     setValidateService(instance){
@@ -133,12 +133,12 @@ export default class ActionController{
             return
         }
 
-        await this.updatePackageJson(packageManager, lastTag, packageManager, sha)
+        await this.updatePackageJson(packageManager, lastTag, sha)
         await this.createOrUpdateChangelog(packageManager)
         
     }
 
-    async updatePackageJson(packageManager, lastTag, packageManager, sha){
+    async updatePackageJson(packageManager, lastTag, sha){
         await this.getExecService().installDependencies(packageManager)
         this.getFsService().setExecService(this.getExecService())
         this.getFsService().setValidateService(this.getValidateService())
@@ -160,7 +160,7 @@ export default class ActionController{
     }
 
     async getFileRead(filePath){
-        this.getFormatService().setParam(githubService.getParam())
+        this.getFormatService().setParam(this.getGithubService().getParam())
         const {content, sha} = await this.getGithubService().getContent(filePath)
         return {content, sha}
     }

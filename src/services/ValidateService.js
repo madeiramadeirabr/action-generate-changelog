@@ -84,10 +84,6 @@ export default class ValidateService {
             return false
         }
 
-        if(path != ''){
-            return false
-        }
-
         return true
     }
 

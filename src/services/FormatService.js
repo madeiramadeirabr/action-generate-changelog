@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer'
 export default class FormatService {
     
     setValidateService(instance){
