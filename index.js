@@ -188,14 +188,13 @@ async function uploadFileBase64(){
 }
 
 async function generateChangelog(packageManager){
-    if (packageManager == 'yarn'){
-        await exec(`${packageManager} add auto-changelog --dev --ignore-workspace-root-check`)
+    if(packageManager == 'yarn'){
+        await exec(`${packageManager} add auto-changelog --dev`)
         await exec(`${packageManager} auto-changelog -p`)
     }else{
-        await exec(`${packageManager} install auto-changelog --save-dev --ignore-workspace-root-check`)
+        await exec(`${packageManager} install auto-changelog --save-dev`)
         await exec(`${packageManager} run changelog`)
     }
-
 }
 
 function getPackageManager(){
