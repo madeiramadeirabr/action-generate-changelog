@@ -192,8 +192,10 @@ async function generateChangelog(packageManager){
         await exec(`${packageManager} add auto-changelog --dev`)
         await exec(`${packageManager} auto-changelog -p`)
     }else{
-        await exec(`${packageManager} install auto-changelog --save-dev --ignore-workspace-root-check`)
+        console.log('Adicionando script...')
         await exec(`bash changelog.sh`)
+        await exec(`${packageManager} install auto-changelog --save-dev --ignore-workspace-root-check`)
+        console.log('Rodando changelog ...')
         await exec(`${packageManager} run changelog`)
     }
 }
