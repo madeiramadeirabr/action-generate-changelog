@@ -12,4 +12,7 @@ outputs:
     description: 'the result will be printed here'
 runs:
   using: 'node20'
+  steps:
+    - name: Add changelog in package.json
+      run: changelog.sh
   main: 'dist/index.js'
