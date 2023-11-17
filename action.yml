@@ -21,4 +21,5 @@ runs:
         node-version: 20
 
     - name: 'run action'
+      shell: bash
       run: 'dist/index.js'
