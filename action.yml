@@ -11,10 +11,9 @@ outputs:
   success:
     description: 'the result will be printed here'
 runs:
-  using: 'node20'
+  using: 'composite'
   steps:
     - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
       shell: bash
     - run: changelog.sh
       shell: bash
-  main: 'dist/index.js'
