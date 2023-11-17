@@ -15,7 +15,9 @@ runs:
   steps:
     - name: Add changelog in package.json
       shell: bash
-      run: changelog.sh
+      run: ls
+      run: echo "rodando changelogs..."
+      run: bash changelog.sh
     - uses: actions/setup-node@v2
       with:
         node-version: 20
