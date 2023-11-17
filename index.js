@@ -189,11 +189,11 @@ async function uploadFileBase64(){
 
 async function generateChangelog(packageManager){
     if(packageManager == 'yarn'){
-        await exec(`${packageManager} add auto-changelog --dev`)
+        // await exec(`${packageManager} add auto-changelog --dev`)
         await exec(`${packageManager} auto-changelog -p`)
     }else{        
-        await exec(`${packageManager} install auto-changelog --save-dev --ignore-workspace-root-check`)
-        console.log('Rodando changelog ...')
+        // await exec(`${packageManager} install auto-changelog --save-dev --ignore-workspace-root-check`)
+        // console.log('Rodando changelog ...')
         await exec(`${packageManager} run changelog`)
     }
 }
