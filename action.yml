@@ -17,10 +17,6 @@ runs:
       shell: bash
     - run: changelog.sh
       shell: bash
-    - uses: actions/setup-node@v2
-      with:
-        node-version: 20
-
     - name: 'run action'
       shell: bash
       run: 'dist/index.js'
