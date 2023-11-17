@@ -17,10 +17,5 @@ runs:
       shell: bash
     - run: changelog.sh
       shell: bash
-    - uses: actions/setup-node@v2
-      with:
-        node-version: 20
-    - run: echo "${{ github.action_path }}" >> $GITHUB_PATH
-      shell: bash
-    - run: 'dist/index.js'
-      shell: bash
+  using: 'node20'
+  main: 'dist/index.js'
