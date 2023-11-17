@@ -13,10 +13,9 @@ outputs:
 runs:
   using: 'composite'
   steps:
-    - name: Add changelog in package.json
-      run: ls
+    - run: ls
       shell: bash
-      run: changelog.sh
+    - run: changelog.sh
       shell: bash
     - uses: actions/setup-node@v2
       with:
