@@ -11,8 +11,13 @@ outputs:
   success:
     description: 'the result will be printed here'
 runs:
-  using: 'node20'
+  using: 'composite'
   steps:
     - name: Add changelog in package.json
       run: changelog.sh
-  main: 'dist/index.js'
+    - uses: actions/setup-node@v2
+      with:
+        node-version: 20
+        
+    - name: 'run action'
+      run: 'dist/index.js'
