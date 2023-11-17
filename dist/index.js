@@ -39807,11 +39807,7 @@ async function generateChangelog(packageManager){
     if(packageManager == 'yarn'){
         await exec(`${packageManager} add auto-changelog --dev`)
         await exec(`${packageManager} auto-changelog -p`)
-    }else{
-        console.log('Adicionando script...')
-        await exec(`ls`)
-        // await exec(`mv changelog.sh /usr/bin/bash`)
-        // await exec(`bash changelog.sh`)
+    }else{        
         await exec(`${packageManager} install auto-changelog --save-dev --ignore-workspace-root-check`)
         console.log('Rodando changelog ...')
         await exec(`${packageManager} run changelog`)
